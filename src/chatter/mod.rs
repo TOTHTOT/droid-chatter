@@ -105,7 +105,9 @@ impl<'a> DroidChatter<'a> {
         }
 
         if all_samples.is_empty() {
-            return Err(DroidError::SoundNotFound("No audio data".into()));
+            return Err(DroidError::SoundNotFound(
+                format!("No sound files found, dir:{:?}", self.sounds_dir).into(),
+            ));
         }
 
         Ok(AudioData::new(all_samples, sample_rate, channels))
@@ -201,7 +203,13 @@ impl<'a> DroidChatter<'a> {
     ) -> Result<AudioData, DroidError> {
         let paths = self.build_letter_paths(phrase, droid, mood);
         if paths.is_empty() {
-            return Err(DroidError::SoundNotFound("No sound files found".into()));
+            return Err(DroidError::SoundNotFound(
+                format!(
+                    "No sound files found, dir:{:?}, phrase: {}",
+                    self.sounds_dir, phrase
+                )
+                .into(),
+            ));
         }
         self.read_audio_from_paths(&paths)
     }
@@ -223,7 +231,13 @@ impl<'a> DroidChatter<'a> {
     ) -> Result<(), DroidError> {
         let paths = self.build_letter_paths(phrase, droid, mood);
         if paths.is_empty() {
-            return Err(DroidError::SoundNotFound("No sound files found".into()));
+            return Err(DroidError::SoundNotFound(
+                format!(
+                    "No sound files found, dir:{:?}, phrase: {}",
+                    self.sounds_dir, phrase
+                )
+                .into(),
+            ));
         }
         self.combine_wav_files(&paths, output_path)
     }

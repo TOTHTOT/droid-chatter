@@ -1,14 +1,14 @@
 [package]
 name = "droid-chatter"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 
 [dependencies]
-rodio = "0.19"
+rodio = "0.22.2"
 walkdir = "2"
-thiserror = "1"
+thiserror = "2.0.18"
 hound = "3.5"
-reqwest = { version = "0.12", features = ["blocking"] }
+reqwest = { version = "0.13.3", features = ["blocking"] }
 tar = "0.4"
 flate2 = "1"
 

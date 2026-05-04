@@ -1,0 +1,16 @@
+[package]
+name = "droid-chatter"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rodio = "0.19"
+walkdir = "2"
+thiserror = "1"
+hound = "3.5"
+reqwest = { version = "0.12", features = ["blocking"] }
+tar = "0.4"
+flate2 = "1"
+
+[dev-dependencies]
+tempfile = "3"

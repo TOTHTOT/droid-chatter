@@ -1,6 +1,6 @@
 //! Core droid chatter implementation
 
-use rodio::{Decoder, OutputStream, Sink};
+use rodio::{Decoder, DeviceSinkBuilder};
 use std::fs::File;
 use std::io::BufReader;
 use std::path::{Path, PathBuf};
@@ -55,35 +55,35 @@ impl<'a> DroidChatter<'a> {
     }
 
     fn play_wav(&self, path: &Path) -> Result<(), DroidError> {
-        let (_stream, stream_handle) =
-            OutputStream::try_default().map_err(|e| DroidError::PlaybackError(e.to_string()))?;
-        let sink =
-            Sink::try_new(&stream_handle).map_err(|e| DroidError::PlaybackError(e.to_string()))?;
+        let sink = DeviceSinkBuilder::open_default_sink()
+            .map_err(|e| DroidError::PlaybackError(e.to_string()))?;
+        let mixer = sink.mixer();
 
         let file = File::open(path)?;
         let source = Decoder::new(BufReader::new(file))
             .map_err(|e| DroidError::PlaybackError(e.to_string()))?;
-        sink.append(source);
-        sink.sleep_until_end();
+
+        mixer.add(source);
+        std::thread::sleep(std::time::Duration::from_secs(2));
 
         Ok(())
     }
 
     fn play_wav_sequence(&self, paths: &[PathBuf]) -> Result<(), DroidError> {
-        let (_stream, stream_handle) =
-            OutputStream::try_default().map_err(|e| DroidError::PlaybackError(e.to_string()))?;
-        let sink =
-            Sink::try_new(&stream_handle).map_err(|e| DroidError::PlaybackError(e.to_string()))?;
+        let sink = DeviceSinkBuilder::open_default_sink()
+            .map_err(|e| DroidError::PlaybackError(e.to_string()))?;
+        let mixer = sink.mixer();
 
         for path in paths {
             if let Ok(file) = File::open(path) {
                 if let Ok(source) = Decoder::new(BufReader::new(file)) {
-                    sink.append(source);
+                    mixer.add(source);
                 }
             }
         }
 
-        sink.sleep_until_end();
+        std::thread::sleep(std::time::Duration::from_secs(2));
+
         Ok(())
     }
 
